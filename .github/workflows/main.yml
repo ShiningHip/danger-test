@@ -5,10 +5,9 @@ name: AddReleaseNote
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
+    types: [ closed ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -28,3 +27,4 @@ jobs:
           echo "Pull request's base branch is: ${PR_TITLE}"
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
+        if: github.event.pull_request.merged == 'true'
