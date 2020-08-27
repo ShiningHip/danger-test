@@ -27,4 +27,4 @@ jobs:
           echo "Pull request's base branch is: ${PR_TITLE}"
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
-        if: github.event.pull_request.merged == 'true'
+        if: github.event.pull_request.merged == true
