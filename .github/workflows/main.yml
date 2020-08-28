@@ -48,10 +48,12 @@ jobs:
       - name: Create request body
         if: github.event.pull_request.merged == true
         run: |
-          body=`echo ${getResponse} | jq -r .results[0].body.storage.value `
-          version=`echo ${getResponse} | jq -r .results[0].version.number `
+          body=`echo $getResponse | jq -r .results[0].body.storage.value | sed -e 's/"/\\\\"/g'`
+          version=`echo $getResponse | jq -r .results[0].version.number `
           today=`date '+%F'`
-          requestBody=`cat <<- EOS
+          joined=`echo "${body}<p><strong>${today}</strong>: prTitle</p>"`
+          medieval=`echo ${joined} | sed -e 's/\\\\"/__________/g'`
+          newContent=`echo ${medieval} | sed -e "s/__________/'/g"`
           { \
             \"id\":\"140509192\", \
             \"version\":{ \
@@ -62,7 +64,7 @@ jobs:
             \"type\":\"page\", \
             \"body\":{ \
               \"storage\":{ \
-                \"value\":\"${body}<p><strong>${today}</strong>: ${PR_TITLE}</p>\", \
+                \"value\":\"${newContent}\", \
                 \"representation\":\"storage\" \
               } \
             } \
