@@ -83,8 +83,7 @@ jobs:
           -u "shininghip.niigata@gmail.com:nfY8vqPu8HfeowwOKUSO921F" \
           -d "${requestBody}" \
           -o /dev/null \
-          -w '%{http_code}\n' \
-          -s
+          -w '%{http_code}\n'
           EOS
           `
           putResponse=`eval ${putRequest}`
