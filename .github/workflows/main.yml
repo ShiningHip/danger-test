@@ -30,7 +30,52 @@ jobs:
           echo "Pull request's base branch is: ${PR_TITLE}"
           echo "::set-env name=PR_TITLE::${PR_TITLE}"
           
-      - name: Step that prints name of pull request's base branch 2
+      # Runs a single command using the runners shell
+      - name: Add release note
         if: github.event.pull_request.merged == true
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
-          echo "Pull request's base branch is: ${PR_TITLE}"
+          getRequest=`cat << EOS
+          curl \
+          -X GET \
+          "https://penguin-project.atlassian.net/wiki/rest/api/content/?id=140509192&expand=version,body.storage" \
+          -H "content-type: application/json" \
+          -u "shininghip.niigata@gmail.com:nfY8vqPu8HfeowwOKUSO921F"
+          EOS
+          `
+          getResponse=`eval ${getRequest}`
+          body=`echo $getResponse | jq -r .results[0].body.storage.value `
+          version=`echo $getResponse | jq -r .results[0].version.number `
+          today=`date '+%F'`
+          requestBody=`cat <<- EOS
+          { \
+            \"id\":\"140509192\", \
+            \"version\":{ \
+              \"number\":$(($version + 1)), \
+              \"minorEdit\":true \
+            }, \
+            \"title\":\"リリースノート\", \
+            \"type\":\"page\", \
+            \"body\":{ \
+              \"storage\":{ \
+                \"value\":\"${body}<p><strong>${today}</strong>: ${PR_TITLE}</p>\", \
+                \"representation\":\"storage\" \
+              } \
+            } \
+          }
+          EOS
+          `
+          putRequest=`cat << EOS
+          curl \
+          -X PUT \
+          "https://penguin-project.atlassian.net/wiki/rest/api/content/140509192" \
+          -H "content-type: application/json" \
+          -u "shininghip.niigata@gmail.com:nfY8vqPu8HfeowwOKUSO921F" \
+          -d "${requestBody}" \
+          -o /dev/null \
+          -w '%{http_code}\n' \
+          -s
+          EOS
+          `
+          putResponse=`eval ${putRequest}`
