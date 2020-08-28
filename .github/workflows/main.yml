@@ -54,6 +54,8 @@ jobs:
           joined=`echo "${body}<p><strong>${today}</strong>: prTitle</p>"`
           medieval=`echo ${joined} | sed -e 's/\\\\"/__________/g'`
           newContent=`echo ${medieval} | sed -e "s/__________/'/g"`
+
+          requestBody=`cat <<- EOS
           { \
             \"id\":\"140509192\", \
             \"version\":{ \
