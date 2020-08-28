@@ -44,7 +44,7 @@ jobs:
           `
           getResponse=`eval ${getRequest}`
           echo "Succeeded to get current document"
-          echo "::set-env name=getResponse::${getReponse}"
+          echo "::set-env name=getResponse::${getResponse}"
           
       # Runs a single command using the runners shell
       - name: Add release note
