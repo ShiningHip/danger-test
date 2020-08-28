@@ -21,7 +21,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
+      # Runs steps
       - name: Get merged pull request's name
         if: github.event.pull_request.merged == true
         env:
@@ -29,9 +29,8 @@ jobs:
         run: |
           echo "Pull request's name is: ${PR_TITLE}"
           echo "::set-env name=PR_TITLE::${PR_TITLE}"
-      
-       # Runs a single command using the runners shell
-      - name: Add release note
+          
+      - name: Get current document
         if: github.event.pull_request.merged == true
         run: |
           getRequest=`cat << EOS
@@ -43,11 +42,10 @@ jobs:
           EOS
           `
           getResponse=`eval ${getRequest}`
-          echo "Succeeded to get current document"
+          echo "Success"
           echo "::set-env name=getResponse::${getResponse}"
           
-      # Runs a single command using the runners shell
-      - name: Add release note
+      - name: Create request body
         if: github.event.pull_request.merged == true
         run: |
           body=`echo ${getResponse} | jq -r .results[0].body.storage.value `
@@ -71,6 +69,12 @@ jobs:
           }
           EOS
           `
+          echo "Success"
+          echo "::set-env name=requestBody::${requestBody}"
+          
+      - name: Add release note
+        if: github.event.pull_request.merged == true
+        run: |
           putRequest=`cat << EOS
           curl \
           -X PUT \
@@ -84,3 +88,5 @@ jobs:
           EOS
           `
           putResponse=`eval ${putRequest}`
+          echo "Success"
+          echo "Completed all steps"
