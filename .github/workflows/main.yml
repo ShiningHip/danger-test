@@ -26,6 +26,7 @@ jobs:
         if: github.event.pull_request.merged == true
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
+          TZ: Asia/Tokyo
         run: |
           echo "Pull request's name is: ${PR_TITLE}"
           echo "::set-env name=PR_TITLE::${PR_TITLE}"
