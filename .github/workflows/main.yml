@@ -28,8 +28,9 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           echo "Pull request's base branch is: ${PR_TITLE}"
+          echo "::set-env name=PR_TITLE::${PR_TITLE}"
           
       - name: Step that prints name of pull request's base branch 2
         if: github.event.pull_request.merged == true
         run: |
-          echo "Pull request's base branch is: ${PR_TITLE}"
+          echo "Pull request's base branch is: $env:PR_TITLE"
