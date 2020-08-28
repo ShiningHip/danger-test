@@ -12,7 +12,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  record:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -26,5 +26,10 @@ jobs:
         if: github.event.pull_request.merged == true
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          echo "Pull request's base branch is: ${PR_TITLE}"
+          
+      - name: Step that prints name of pull request's base branch 2
+        if: github.event.pull_request.merged == true
         run: |
           echo "Pull request's base branch is: ${PR_TITLE}"
